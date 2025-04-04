@@ -27,7 +27,7 @@ apiInstance.interceptors.response.use((response)=>{
     return response; 
 
 },(error)=>{
-    if(error.response && error.response.status){
+    if(error.response && error.response.status===403){
         sessionStorage.clear();
     }
 });

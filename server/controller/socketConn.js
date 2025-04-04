@@ -21,7 +21,8 @@ module.exports = function initializeSocket(server) {
             console.log(`User ${userId} registered with socket ID: ${socket.id}`);
         });
         socket.on("typing", (data) => {
-            io.to(data.receiverId).emit("show_typing", data);
+            console.log(`User ${data.receiverId} Typing`);
+            io.to(users[data.receiverId]).emit("deliver", data);
         });
 
         socket.on("mark_as_read", async (data) => {
@@ -30,6 +31,7 @@ module.exports = function initializeSocket(server) {
                 { $set: { isRead: true } }
             );
         });
+        
         // Handle private messages
         socket.on("send_message", async (data) => {
             const { senderId, receiverId, message } = data;
