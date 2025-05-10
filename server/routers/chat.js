@@ -1,12 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const Message = require("../database/messages");
+const { redisFetchMessages, redisSetAllMessages } = require("../utility/redisUtility");
 
 // Get chat history between two users
 router.post("/chat/:user1/:user2", async (req, res) => {
     const { user1, user2 } = req.params;
     
     try {
+        const cacheMsgs  = await redisFetchMessages(user1,user2);
+        console.log(cacheMsgs);
+        if(cacheMsgs) return res.json(cacheMsgs);
+
+
+        else{
+        //fetch from db if not catched
         const messages = await Message.find({
             $or: [
                 { senderId: user1, receiverId: user2 },
@@ -14,9 +22,15 @@ router.post("/chat/:user1/:user2", async (req, res) => {
             ]
         }).sort({ timestamp: 1 });
 
+        //update the or add the new values
+       // console.log(messages);
+        await redisSetAllMessages(user1,user2,messages);
+
         res.json(messages);
+    }
     } catch (error) {
-        res.status(500).json({ error: "Error fetching messages" });
+        console.log(error);
+        res.status(400).json({ error: "Error fetching messages" });
     }
 });
 

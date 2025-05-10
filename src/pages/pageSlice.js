@@ -3,6 +3,7 @@ import {createSlice}  from "@reduxjs/toolkit"
 const initialState ={
     showChat : false,
     product : null,
+    onlineUsers:[],
 }
 
 const pageSlice = createSlice({
@@ -14,12 +15,15 @@ const pageSlice = createSlice({
         },
         setProductData:(state,action)=>{
             state.product = action.payload;
+        },
+        setOnlineUsers:(state,action)=>{
+            state.onlineUsers = action.payload;
         }
 
     }
 });
 
-export const {setShowChat,setProductData} = pageSlice.actions;
+export const {setShowChat,setProductData,setOnlineUsers} = pageSlice.actions;
 
 export default pageSlice.reducer;
 
